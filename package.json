@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "devstart": "nodemon ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/johnwing/fyp2020/issues"
   },
-  "homepage": "https://github.com/johnwing/fyp2020#readme"
+  "homepage": "https://github.com/johnwing/fyp2020#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
 }
