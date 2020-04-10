@@ -2,6 +2,16 @@
 var express = require('express');
 var app = express();
 
+var mysql = require('mysql');
+var engine = require('ejs-locals');
+const bodyParser = require('body-parser');
+var crypto = require('crypto');
+app.engine('ejs',engine);
+//app.set('files','./files');
+app.set('views', './views');
+app.set('view engine','ejs');
+
+
 // use express get method 
 // create root router and print hello world
 app.get('/', function(req, res){
