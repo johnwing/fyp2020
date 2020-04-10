@@ -15,7 +15,7 @@ app.set('view engine','ejs');
 // use express get method 
 // create root router and print hello world
 app.get('/', function(req, res){
-  res.send('hello world');
+  res.send('hello world2');
 });
 
 // check running enviroment
