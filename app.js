@@ -6,16 +6,19 @@ var mysql = require('mysql');
 var engine = require('ejs-locals');
 const bodyParser = require('body-parser');
 var crypto = require('crypto');
+const path = require('path');
+const router = express.Router();
 app.engine('ejs',engine);
 //app.set('files','./files');
 app.set('views', './views');
 app.set('view engine','ejs');
 
+app.use(express.static(path.join(__dirname, 'public')));
 
 // use express get method 
 // create root router and print hello world
 app.get('/', function(req, res){
-  res.send('hello world2');
+  res.render('index.html');
 });
 
 // check running enviroment
