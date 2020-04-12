@@ -27,6 +27,7 @@
     "ejs": "^3.0.2",
     "ejs-locals": "^1.0.2",
     "express": "^4.17.1",
+    "googleapis": "^48.0.0",
     "mysql": "^2.18.1"
   },
   "description": ""
