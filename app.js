@@ -5,7 +5,7 @@
 var express = require('express');
 var app = express();
 var firebase = require("firebase");
-var firebaseui = require('firebaseui');
+//var firebaseui = require('firebaseui');
 var mysql = require('mysql');
 var engine = require('ejs-locals');
 const bodyParser = require('body-parser');
@@ -18,6 +18,9 @@ app.set('views', './views');
 app.set('view engine','ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+/*
 const Firestore = require('@google-cloud/firestore');
 const firestore = new Firestore({
     projectId: 'cuhkfyp2020'
@@ -45,7 +48,7 @@ var ref = db.collection('fruit'); // add() 是針對集合使用
 var provider = new firebase.auth.GoogleAuthProvider();
 
 
-
+*/
 
 
 
@@ -59,6 +62,7 @@ var provider = new firebase.auth.GoogleAuthProvider();
 
 // use express get method 
 // create root router and print hello world
+/*
 app.get('/', function(req, res){
  res.sendFile(__dirname +'/public/fileward.html');
   ref.add({
@@ -73,7 +77,7 @@ app.get('/', function(req, res){
 
 
 });
-
+*/
 // check running enviroment
 var port = process.env.PORT || 8000;
 
