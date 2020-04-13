@@ -29,7 +29,10 @@
     "ejs-locals": "^1.0.2",
     "express": "^4.17.1",
     "firebase": "^7.14.0",
+    "firebase-tools": "^8.0.3",
+    "firebaseui": "^4.5.0",
     "googleapis": "^48.0.0",
+    "html": "^1.0.0",
     "mysql": "^2.18.1"
   },
   "description": ""

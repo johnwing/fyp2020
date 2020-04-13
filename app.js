@@ -5,6 +5,7 @@
 var express = require('express');
 var app = express();
 var firebase = require("firebase");
+var firebaseui = require('firebaseui');
 var mysql = require('mysql');
 var engine = require('ejs-locals');
 const bodyParser = require('body-parser');
@@ -39,9 +40,17 @@ const firestore = new Firestore({
   firebase.initializeApp(firebaseConfig);
 
 
-
 var db = firebase.firestore();
 var ref = db.collection('fruit'); // add() 是針對集合使用
+var provider = new firebase.auth.GoogleAuthProvider();
+
+
+
+
+
+
+
+
 
 
 
@@ -51,24 +60,27 @@ var ref = db.collection('fruit'); // add() 是針對集合使用
 // use express get method 
 // create root router and print hello world
 app.get('/', function(req, res){
-  res.render('index.html');
+ res.sendFile(__dirname +'/public/fileward.html');
   ref.add({
-  total:450,
+  total:4577,
   good:400
 }).then(() => {
   console.log('add data successful');
 });
 
 
+
+
+
 });
 
 // check running enviroment
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8000;
 
 // create
 app.listen(port);
 
 // only print hint link for local enviroment 
-if(port === 3000){
-  console.log('RUN http://localhost:3000/')
+if(port === 8000){
+  console.log('RUN http://localhost:8000/')
 }
