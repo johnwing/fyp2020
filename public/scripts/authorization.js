@@ -43,9 +43,15 @@ googleSignupForm.addEventListener('submit', (e) => {
     var token = result.credential.accessToken;
     // ...
     console.log(token);
+    // The signed-in user info.
+      var user = result.user;
+      db.collection('guides').add({
+        title: "testing",
+        content: "hq"
+      }).catch(err => {
+        console.log(err.message);
+      });
   }
-  // The signed-in user info.
-  var user = result.user;
   }).catch(function(error) {
     // Handle Errors here.
     var errorCode = error.code;

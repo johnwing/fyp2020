@@ -1,3 +1,4 @@
+
 // setup materialize components
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -8,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
   M.Collapsible.init(items);
 
 });
-
 
 
 //Set DOM Elements
