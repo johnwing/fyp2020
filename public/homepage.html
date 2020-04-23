@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	<title>Hello World</title>
+</head>
+<body>
+<!--
+CLASS List
+login - show when login
+logout - show when logout
+
+
+-->
+
+  <nav class="z-depth-0 grey lighten-4">
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo">
+        <img src="../img/logo.svg" style="width: 180px; margin-top: 10px;">
+      </a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li class="loginclass">
+            <a href="#" class="grey-text modal-trigger" data-target="modal-account">Account</a>
+          </li>
+          <li class="loginclass">
+            <a href="#" class="grey-text" id="logout">Logout</a>
+          </li>
+          <li class="logoutclass" >
+            <a href="#" class="grey-text modal-trigger" data-target="modal-google-signup">Google Sign In</a>
+          </li>
+        </span>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ACCOUNT MODAL -->
+  <div id="modal-account" class="modal">
+    <div class="modal-content center-align">
+      <h4>Account details</h4><br />
+      <div class="account-details"></div>
+      <div class="account-extras"></div>
+    </div>
+  </div>
+
+
+
+  <!-- GOOGLE SIGN UP MODAL -->
+  <div id="modal-google-signup" class="modal">
+    <div class="modal-content">
+      <h4>Sign up</h4><br />
+      <form id="google-signup-form">
+        <div class="input-field">
+          <input type="email" id="google-signup-email"  />
+          <label for="google-signup-email">Email address</label>
+        </div>
+        <button class="btn yellow darken-2 z-depth-0">Sign up</button>
+      </form>
+    </div>
+  </div>  
+
+
+
+
+
+
+
+
+
+
+
+<!-- Scripts List -->
+  <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyDfdXMCk4_oo5UGkiA20IYoPGE6sKvstzk",
+      authDomain: "cuhkfyp2020.firebaseapp.com",
+      databaseURL: "https://cuhkfyp2020.firebaseio.com",
+      projectId: "cuhkfyp2020",
+      storageBucket: "cuhkfyp2020.appspot.com",
+      messagingSenderId: "12732194759",
+      appId: "1:12732194759:web:c18707b920f409bde0c3e2",
+      measurementId: "G-TM10H85S0Y"
+  };
+    firebase.initializeApp(config);
+    
+    // make auth and firestore references
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const functions = firebase.functions();
+    var provider = new firebase.auth.GoogleAuthProvider();
+
+    // update firestore settings
+    db.settings({ timestampsInSnapshots: true });
+  </script>
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="scripts/authorization.js"></script>
+  <script src="scripts/homepage.js"></script>
+</body>
+</html>

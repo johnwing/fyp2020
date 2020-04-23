@@ -58,8 +58,8 @@ const setupGuides = (data) => {
     guideList.innerHTML = '<h5 class="center-align">Login to view guides</h5>';
   }
   
-
 };
+
 
 // setup materialize components
 document.addEventListener('DOMContentLoaded', function() {
