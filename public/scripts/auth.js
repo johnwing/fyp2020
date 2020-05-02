@@ -18,11 +18,11 @@ auth.onAuthStateChanged(user => {
       setupUI(user);
     });
     db.collection('guides').onSnapshot(snapshot => {
-      setupGuides(snapshot.docs);
+      //setupGuides(snapshot.docs);
     }, err => console.log(err.message));
   } else {
     setupUI();
-    setupGuides([]);
+    //setupGuides([]);
   }
 });
 

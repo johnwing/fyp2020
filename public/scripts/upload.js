@@ -4,16 +4,20 @@ userPresent = document.querySelector('.userPresent');
 
 
 const setupUI = (user) => {
-  //console.log(user.uid);
+
   if (user) {
-    // account info
+  console.log(user.email); 
+     // account info
     db.collection('users').doc(user.uid).get().then(doc => {
       console.log(doc);  
       const html = `
         <div>Logged in as ${user}</div>      `;
       userPresent.innerHTML = html;
-      console.log("good");
 
+
+    });
+    db.collection('users').doc(user.uid).set({
+      email: user.email
     });
 
     // toggle user UI elements
@@ -28,3 +32,17 @@ const setupUI = (user) => {
     //loggedOutLinks.forEach(item => item.style.display = 'block');
   }
 };
+
+
+
+function writeUserData(userId, name, email, imageUrl) {
+  db.ref('users/' + userId).set({
+    email: email
+  });
+}
+
+
+
+
+
+
