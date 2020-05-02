@@ -1,4 +1,5 @@
 // add admin cloud function
+/*
 const adminForm = document.querySelector('.admin-actions');
 adminForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -9,7 +10,7 @@ adminForm.addEventListener('submit', (e) => {
     console.log(result);
   });
 });
-
+*/
 // listen for auth status changes
 auth.onAuthStateChanged(user => {
   if (user) {
