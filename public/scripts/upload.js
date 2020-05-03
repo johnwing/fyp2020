@@ -2,6 +2,12 @@
 userPresent = document.querySelector('.userPresent');
 
 
+function setupGuides()
+{
+  
+}
+
+
 
 const setupUI = (user) => {
 

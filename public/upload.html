@@ -4,8 +4,8 @@
 	<meta charset="UTF-8">
 	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-	  <!-- Compiled and minified CSS -->
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	  <!-- Compiled and minified CSS
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
 	<title>Hello</title>
 </head>
 <body>
@@ -130,7 +130,55 @@
   </div>
 
 
-Hi
+
+
+<!--Generate an Assignment-->
+<div class='teacher'>
+	<form class='createAssignment' >
+        <div class="input-field">
+          <input type="text" id="assignmetTopic" required />
+          <label for="assignmentTopic">Topic</label>
+        </div>
+        <div class="input-field">
+          <textarea type="text" id="assignmetDescription" >
+          	
+          </textarea>
+          <label for="assignmentDescription">Description</label>
+        </div>          
+        <div>
+          	<span id='assignmentAttachment'style='border:2px grey solid;'>
+          		Add Attachment
+          	</span>
+        </div><br/>
+        <div id="assignmentContentSheet" class="input-field">
+        	<div>
+	        	<span id='assignmentAddContent'style='border:2px grey solid;'>
+	        		Add New Column
+	        	</span>
+	        </div>
+        	<div id='assignmentNewContent'>
+        		<form id='assignmentNewContent' class="input-field">
+        			<input id="questionTopic" type="text"/>
+        			<label for="questionTopic">Question</label>
+        			<select id="questionType">
+        				<option value="mc">Mutiple Choice</option>
+        				<option value="fillInTheBlank">Fill in the Blank</option>
+        				<option value="shortQ">Short Question</option>
+        				<option value="longQ">Long Question</option>
+        			</select>
+        			<label for="questionType">Question Type</label>
+        		</form>
+        	</div>
+        	<ul id="assignmentContent">
+        		
+        	</ul>
+        </div>
+        <div>
+
+        </div>
+
+	</form>
+</div>
 
 
 
@@ -140,8 +188,6 @@ Hi
 <div id="upload-assignment" class="container userPresent">
 	
 </div>
-
-
 
 
 
