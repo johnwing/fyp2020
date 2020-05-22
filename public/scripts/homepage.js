@@ -24,7 +24,7 @@ const setupUI = (user) => {
   	if (user) 
   	{
 	    // account info
-	 	console.log("good");
+	 	console.log(user.uid);
 	 	// toggle user UI elements
 	    loginhtml.forEach(item => item.style.display = 'block');
 	    logouthtml.forEach(item => item.style.display = 'none');

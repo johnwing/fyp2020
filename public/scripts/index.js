@@ -21,7 +21,7 @@ const setupUI = (user) => {
       `;
       accountDetails.innerHTML = html;
       
-      console.log("good");
+      console.log(user.uid);
 
     });
 

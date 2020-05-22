@@ -6,7 +6,8 @@
 	  <meta http-equiv="X-UA-Compatible" content="ie=edge">
 	  <!-- Compiled and minified CSS
 	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
-	<title>Hello</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <title>Hello</title>
 </head>
 <body>
 
@@ -134,7 +135,7 @@
 
 <!--Generate an Assignment-->
 <div class='teacher'>
-	<form class='createAssignment' >
+	<form class='createAssignment' id="assignmentForm">
         <div class="input-field">
           <input type="text" id="assignmetTopic" required />
           <label for="assignmentTopic">Topic</label>
@@ -158,16 +159,33 @@
 	        </div>
         	<div id='assignmentNewContent'>
         		<form id='assignmentNewContent' class="input-field">
-        			<input id="questionTopic" type="text"/>
-        			<label for="questionTopic">Question</label>
-        			<select id="questionType">
-        				<option value="mc">Mutiple Choice</option>
-        				<option value="fillInTheBlank">Fill in the Blank</option>
-        				<option value="shortQ">Short Question</option>
-        				<option value="longQ">Long Question</option>
-        			</select>
-        			<label for="questionType">Question Type</label>
+        			<input class="questionTopic" type="text"/>Question
+        			<label for="questionTopic"></label>
+
+        			<div class="mc questionType">
+                Question Type
+                <select class="questionType">
+                  <option value="mc">Mutiple Choice</option>
+                  <option value="fillInTheBlank">Fill in the Blank</option>
+                  <option value="shortQ">Short Question</option>
+                  <option value="longQ">Long Question</option>
+                </select>
+        			</div>
+              <!--\/Question Type Start-->
+              <div class='mc'>
+                <input type="radio"  name="1" value=" " > <input type="text" class="radioInputAnswer">
+                         <br/>
+                <button type='button' value="1" class='radioAddOption' > Add Option</button>
+
+              </div>
+
+              <!--/\Question-->
+
+
+
+
         		</form>
+
         	</div>
         	<ul id="assignmentContent">
         		
@@ -178,6 +196,7 @@
         </div>
 
 	</form>
+  <button type="submit" form="assignmentForm" value="Submit" id="formSubmit">Submit</button>
 </div>
 
 
@@ -191,6 +210,31 @@
 
 
 
+
+
+
+<!--Own Scripts-->
+<script>
+
+
+
+
+    /*
+  var txt = "<b>Iam </b>"; 
+  var txt1 =$.parseHTML(txt);
+          // Create element with HTML
+  var txt2 = $("<i></i>").text("love ");  // Create with jQuery
+  var txt3 = document.createElement("div");   // Create with DOM
+  txt3.innerHTML = '<input type="radio" id="huey" name="drone" value="huey"checked> hi';
+
+  txt3.setAttribute('name',"drone");
+
+ // Insert new elements after img    
+    event.target.before(txt3) ;
+     alert("caller ");
+  }
+  */
+</script>
 
 
 
