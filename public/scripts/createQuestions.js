@@ -74,13 +74,13 @@ $('#answerFilter').on("change",'#noOfmcChoice',function()
 
 $('#answerFilter').on("change",'#noOfFillInTheBlankChoice',function()
 {
-	$('#mcChoiceList').html("");
+	$('#fillInTheBlankList').html("");
 	var i=0;
 	var n=parseInt($('#noOfFillInTheBlankChoice').val());
 	//alert(n);
 	for(i=0;i<n;i++)
 	{
-		$('#mcChoiceList').append('<p><input type="text" class="radioInputAnswer id='+i+'"></p>');
+		$('#fillInTheBlankList').append('<p><input type="text" class="radioInputAnswer id='+i+'"></p>');
 	}
 	console.log("ok");
 })
