@@ -5,9 +5,9 @@ auth.onAuthStateChanged(user => {
       user.admin = idTokenResult.claims.admin;
       setupUI(user);
     });
-    /*db.collection('fileLink').onSnapshot(snapshot => {
-      setupGuides(snapshot.docs);
-    }, err => console.log(err.message));*/
+    db.collection('fileLink').onSnapshot(snapshot => {
+      //setupGuides(snapshot.docs);
+    }, err => console.log(err.message));
   } else {
     setupUI();
     //setupGuides([]);
