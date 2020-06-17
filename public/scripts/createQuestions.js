@@ -92,6 +92,7 @@ $('#answerFilter').on("change",'.mcAnswer',function()
 	{
 		selectedValue.push($(this).val());
 	});
+	alert('hi');
 	console.log(selectedValue);
 
 })

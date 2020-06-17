@@ -1,0 +1,69 @@
+<form class='createAssignment' id="assignmentForm" >
+<!--Create Question in  a Modal-->
+<div class="modal fade " tabindex="-1" role="dialog" id="createQuestion" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">New Question</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class='teacher container-fluid modal-body'>
+       
+              
+              <div id="assignmentContentSheet" class="form-group">
+                <div id='assignmentNewContent'>
+                  <div id="questionErrorMessage" >
+                    <p id="questionTopicWarning" style="display:none" >Question Should Not Be NULL. </p>
+                    
+                  </div>
+                    <label for="questionTopic">Question</label>
+                    <input class="questionTopic form-control required" type="text"/>
+                    
+
+                    <div class="questionType">
+                      Question Type
+                      <select class="questionType custom-select" id="questionType">
+                        <option value="" disabled selected="selected">--Question Type--</option>
+                        <option value="mc">Mutiple Choice</option>
+                        <option value="fillInTheBlank">Fill in the Blank</option>
+                        <option value="shortQ">Short Question</option>
+                        <option value="longQ">Long Question</option>
+                      </select>
+                    </div>
+                    Answers' Filter:
+                    <!--\/Question Type Start-->
+                    <div class="form-group " id="answerFilter">
+
+                    </div>
+
+
+
+                   
+
+
+
+
+
+                </div>
+                <ul id="assignmentContent">
+                  
+                </ul>
+              </div>
+              <div>
+
+              </div>
+              <button type="button" form="assignmentForm" value="Submit" id="addQuestion" class="btn btn-info">Add New Questions</button>
+        
+        
+      </div>
+      <div class="modal-footer">
+
+      </div>
+
+    </div>
+  </div>
+</div>
+</form>

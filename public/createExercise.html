@@ -4,25 +4,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <title>Hello</title>
+  <style>
+  .error{
+    color:red;
+  }
+  </style>
+
 </head>
 <body>
+
+
+
+
+
 <!--Generate an Assignment-->
 
 
 
+
 <div class='teacher container-fluid'>
-	<form class='createAssignment' id="assignmentForm">
+	<form class='' id="assignmentForm">
         <div class="form-group">
           <label for="assignmentTopic">Topic</label>
-          <input type="text" id="assignmetTopic" class="form-control" placeholder="" />
+          <input type="text" id="assignmetTopic" class="form-control" placeholder="" name="assignmentTopic" required="required" />
           
         </div>
         <div class="form-group">
           <label for="assignmentDescription">Description</label>
-          <textarea class="form-control" type="text" id="assignmetDescription" >
+          <textarea class="form-control" type="text" id="assignmetDescription" name="assignmetDescription">
           	
           </textarea>
           
@@ -31,19 +46,26 @@
           hi
         </div>
         <div class='form-group'>
-            <input type="file" id="file-uploader" data-target="file-uploader"  class="btn btn-info"/>
+            <input type="file" id="file-uploader" data-target="file-uploader"  class="btn btn-info" name="file-uploader"/>
             <button class="btn btn-info" id='uploadFile' type='button'>
               Upload
             </button>
         </div>         
 <br/>
 
-        <div>
-
+        <div class='form-group'>
+            <p>Question List: </p>
+            <div id="addQuestionList">
+              
+            </div>
         </div>
 
+        <div class='form-group'>
+          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createQuestion">Add New Question</button>
+        </div>
+        <button type="submit" form="assignmentForm" value="Submit" id="formSubmit" class="btn btn-info">Submit</button>
 	</form>
-  <button type="submit" form="assignmentForm" value="Submit" id="formSubmit" class="btn btn-info">Submit</button>
+
 </div>
 
 
@@ -57,6 +79,71 @@
 
 
 
+ <form class='createAssignment' id="questionForm"  method="post" action="createExercise.html" >
+<!--Create Question in  a Modal-->
+<div class="modal fade " tabindex="-1" role="dialog" id="createQuestion" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">New Question</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class='teacher container-fluid modal-body'>
+       
+              
+              <div id="assignmentContentSheet" class="form-group">
+                <div id='assignmentNewContent'>
+                    <label for="questionTopic">Question</label>
+                    <input class="questionTopic form-control" id="questionName" name="questionName" type="text"/>
+                    
+
+                    <div class="questionType">
+                      Question Type
+                      <select class="questionType custom-select" id="questionType" name="questionType">
+                        <option value="" disabled selected="selected">--Question Type--</option>
+                        <option value="Mutiple Choice">Mutiple Choice</option>
+                        <option value="Fill-In-The-Blanks">Fill-In-The-Blanks</option>
+                        <option value="Short Question">Short Question</option>
+                        <option value="Long Question">Long Question</option>
+                      </select>
+                    </div>
+                    Answers' Filter:
+                    <!--\/Question Type Start-->
+                    <div class="form-group " id="answerFilter">
+
+                    </div>
+
+
+
+                   
+
+
+
+
+
+                </div>
+                <ul id="assignmentContent">
+                  
+                </ul>
+              </div>
+              <div>
+
+              </div>
+              <button type="submit" form="questionForm" value="Submit" id="addQuestion" class="btn btn-info">Add New Questions</button>
+        
+        
+      </div>
+      <div class="modal-footer">
+
+      </div>
+
+    </div>
+  </div>
+</div>
+</form>
 
 
 
