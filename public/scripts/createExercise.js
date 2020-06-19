@@ -7,11 +7,11 @@ jQuery.validator.setDefaults({
 
 $('form[id="assignmentForm"]').validate({
   rules: {
-    assignmetTopic: 'required',
+    assignmentTopic: 'required',
 
   },
   messages: {
-    assignmetTopic: 'This field is required!!',
+    assignmentTopic: 'This field is required!!',
   },
   submitHandler: function(form) {
     
@@ -81,8 +81,8 @@ var userUid;
 
 const setupUI=(user) => {
 
-	console.log(user.uid);
-	userUid=user.uid;
+	console.log(user);
+	//userUid=user.uid;
   console.log(uuidv4());
   assignmentID='90c1d8d2-c638-4674-8c15-de7c61d87cfd';
 
@@ -758,8 +758,8 @@ $("#formSubmit").on("click",function()
   {
     let assignmentFormData={
       assignmentID: assignmentID,
-      assignmetTopic: $("#assignmetTopic").val(),
-      assignmetDescription: $("#assignmetDescription").val()
+      assignmentTopic: $("#assignmentTopic").val(),
+      assignmentDescription: $("#assignmentDescription").val()
     }
     db.collection('assignmentForm').add(assignmentFormData).then(ref => {
       
