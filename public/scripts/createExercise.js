@@ -71,8 +71,9 @@ auth.onAuthStateChanged(user => {
       setUpQuestionList(snapshot.docs);
     }, err => console.log(err.message));
   } else {
-    setupUI();
-    setupGuides([]);
+   // setupUI();
+  //  setupGuides([]);
+    alert("Login!!!");
   }
 });
 
@@ -83,7 +84,7 @@ var userUid;
 const setupUI=(user) => {
 
 	console.log("BYB"+user);
-	//userUid=user.uid;
+	userUid=user.uid;
   console.log(uuidv4());
   assignmentID='90c1d8d2-c638-4674-8c15-de7c61d87cfd';
 
