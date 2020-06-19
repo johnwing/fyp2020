@@ -58,7 +58,7 @@ $('form[id="questionForm"]').validate({
 const uploadDoc = document.querySelector('#addAttachmentList');
 var assignmentID;
 auth.onAuthStateChanged(user => {
-  if (user) {
+  if (user && user !== undefined) {
     console.log("HI"+user);
     user.getIdTokenResult().then(idTokenResult => {
       user.admin = idTokenResult.claims.admin;
