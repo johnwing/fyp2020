@@ -131,6 +131,7 @@ const setupGuides = (data) => {
       });
 
 
+
     });
     uploadDoc.appendChild(appendixList);
 
@@ -211,9 +212,27 @@ const setUpQuestionList=(data)=>
         console.log(answer);
 
       }
-      else
+      else if(guide.questionType=="Fill-In-The-Blanks")
       {
+        td4.append("Option(s)");
+        let ul=document.createElement("ul");
+        //ul.setAttribute("type","A");
+        //let li=document.createElement("li");
+
+        let answerFilter=guide.answerFilter;
         
+        for(var i=0;i<answerFilter.answerFilter.length;i++)
+        {
+          let li=document.createElement("li");
+          li.innerHTML=answerFilter.answerFilter[i];
+          //answer.push(String.fromCharCode(parseInt(answerFilter.answer[i])+65)); 
+          //li.innerHTML=String.fromCharCode(parseInt(answerFilter.answer[i])+65);          
+          ul.append(li);
+        }
+        td4.append(ul);        
+
+
+
       }
 
       
@@ -224,20 +243,120 @@ const setUpQuestionList=(data)=>
       deleteButton.setAttribute("class","btn btn-info justify-content-end");
       deleteButton.setAttribute("type","button");
       deleteButton.innerHTML="Delete";
+      let editButton=document.createElement("button");
+      editButton.setAttribute("class","btn btn-info justify-content-end");
+      editButton.setAttribute("type","button");
+      editButton.innerHTML="Edit";
 
 
 
-
+      td5.appendChild(editButton);
+      td5.append(" ");
       td5.appendChild(deleteButton);
+
+      
       tr.append(th,td2,td3,td4,td5);
 
+  //delete question
       deleteButton.addEventListener("click",(e)=>
       {
         let id= doc.id;
         db.collection('questions').doc(id).delete();
 
+      //find the data relation in the DB and remove it
+        let relationDB = db.collection('assignmentQuestionRelation');
+        
+       // alert(assignmentID);
+        let targetFieldID="";
+        let query = relationDB.where('questionID', '==', doc.id).where('assignmentID', '==', assignmentID).get().then(snapshot => {
+            if (snapshot.empty) {
+              console.log('No matching documents.');
+              return;
+            }  
+
+            snapshot.forEach(doc => {
+              console.log(doc.id, '=>', doc.data());
+              targetFieldID=doc.id;
+             // dele
+            });
+          }).then(function()
+          {
+            // alert(targetFieldID);
+             db.collection('assignmentQuestionRelation').doc(targetFieldID).delete();
+
+          })
+          .catch(err => {
+            console.log('Error getting documents', err);
+          });
+         
+
+
+
+
+
+
         tr.remove();
       });
+ 
+//edit Question
+      editButton.addEventListener("click",(e)=>
+      {
+        $('#editQuestion').show();
+        $('#editQuestion').val(doc.id);
+        let answerFilter=guide.answerFilter;
+        let id= doc.id;
+        $("#addNewQuestion").click();
+        $("#questionName").val(guide.questionName);
+        $("#questionType").val(guide.questionType);
+        $('#questionType').change();
+        if(guide.questionType=="Mutiple Choice")
+        {
+          $("#noOfmcChoice").val(guide.answerFilter.answerFilter.length);
+          $("#noOfmcChoice").change();
+          
+          
+          for(var i=0;i<answerFilter.answerFilter.length;i++)
+          {
+            
+            $("#"+i.toString()).val(answerFilter.answerFilter[i]);
+            
+          }
+          $.each($("input[name='mcAnswer[]']"), function(){            
+                if(answerFilter.answer.includes($(this).val()))
+                  {
+                    $(this).prop('checked', true);
+                  };              
+            });
+
+
+        }
+        else if(guide.questionType=="Fill-In-The-Blanks")
+        {
+            $("#noOfFillInTheBlankChoice").val(guide.answerFilter.answerFilter.length);
+            $("#noOfFillInTheBlankChoice").change();
+            
+            
+            for(var i=0;i<answerFilter.answerFilter.length;i++)
+            {
+              
+              $("#"+i.toString()).val(answerFilter.answerFilter[i]);
+              
+            }  
+        }
+        
+
+
+        //$("#addQuestion").innerHTML=""
+        
+        //$("#addQuestion").val(doc.id);
+        //alert(doc.id);
+
+
+        
+      });
+
+
+
 
       tbody.appendChild(tr);
     });
@@ -266,7 +385,19 @@ function uuidv4() {
 }
 
 
-//generate 
+//reset modal form after close
+$('#createQuestion').on('hidden.bs.modal', function (e) {
+  $(this)
+    .find("input,textarea,select")
+       .val('')
+       .end()
+    .find("input[type=checkbox], input[type=radio]")
+       .prop("checked", "")
+       .end();
+
+  $('#answerFilter').html("");
+  $('#editQuestion').hide();
+}) 
 
 
 
@@ -315,7 +446,8 @@ $("#uploadFile").on("click",function()
         name: filename,
         user: userUid,
         link: downloadURL,
-        salt: salt
+        salt: salt,
+        assignmentID: assignmentID
       });
     })  
 
@@ -399,7 +531,7 @@ $('#answerFilter').on("change",'#noOfmcChoice',function()
   $('#mcChoiceList').append(`<div id="mcAnswerError"></div> `);
   var i=0;
   var n=parseInt($('#noOfmcChoice').val());
-  alert(n);
+  //alert(n);
   for(i=0;i<n;i++)
   {
     var answerChar=String.fromCharCode(i+65);
@@ -445,29 +577,28 @@ $('#addQuestion').on("click",function()
     var questionName=$("#questionName").val();
     var questionType=$("#questionType").val();
     var answerObject={};
+    let answer=[];
+    var questionData={};
+
     if(questionType=="Fill-In-The-Blanks")
     {
-      var n=parseInt($('#noOfFillInTheBlankChoice').val());   
+      let n=parseInt($('#noOfFillInTheBlankChoice').val());   
       
-      answerObject["Number of Filter"]=n;
+      //answerObject["Number of Filter"]=n;
       for(var i=0;i<n;i++)
       {
 
-        answerObject[i]=$("#"+i.toString()).val();
+        answer.push($("#"+i.toString()).val());
         console.log("#"+i.toString());
         //alert($("#"+i.toString()).val());
       }
-      let questionData={
+      answerObject["answerFilter"]=answer;
+      questionData={
         questionName: questionName,
         questionType: questionType,
         answerFilter: answerObject
       }
-      let addDoc = db.collection('questions').add(questionData).then(ref => {
-      
-      console.log('Added document with ID: ', ref.id);
-      //questionId=ref.id;
-      //alert( questionId);
-      });
+
 
 
       
@@ -490,17 +621,11 @@ $('#addQuestion').on("click",function()
         //alert($("#"+i.toString()).val());
       }
       answerObject["answerFilter"]=answerFilterValue;
-      let questionData={
+      questionData={
         questionName: questionName,
         questionType: questionType,
         answerFilter: answerObject
       }
-      let addDoc = db.collection('questions').add(questionData).then(ref => {
-      
-      console.log('Added document with ID: ', ref.id);
-      //questionId=ref.id;
-      //alert( questionId);
-      });
 
 
 
@@ -508,34 +633,143 @@ $('#addQuestion').on("click",function()
     }
     else
     {
-      let questionData={
+        questionData={
         questionName: questionName,
         questionType: questionType
       }
-      let addDoc = db.collection('questions').add(questionData).then(ref => {
-      
-      console.log('Added document with ID: ', ref.id);
-      //questionId=ref.id;
-      //alert( questionId);
-      });
 
     }
+    let questionID;
+    let addDoc = db.collection('questions').add(questionData).then(ref => {
+      
+        console.log('Added document with ID: ', ref.id);
+        questionID=ref.id;
+            //set relationship of the question and assignment
+        let relationData={
+          assignmentID: assignmentID,
+          questionID: questionID
+        };
+        db.collection('assignmentQuestionRelation').add(relationData).then(ref => {
+        
+          console.log('Added relationship with ID: ', ref.id);
+
+        });
+
+
+
+      });
+
+
+
   }
 });
 
 
-function addQuestion(questionData,callback)
+
+    
+
+$('#editQuestion').on("click",function()
 {
-  questionId="";
-  let addDoc = db.collection('questions').add(questionData).then(ref => {
-    
-    console.log('Added document with ID: ', ref.id);
-    questionId=ref.id;
 
-  });
-};
-    
+  //alert("hi");
+  if($("#questionForm").valid())
+  {
+    var questionName=$("#questionName").val();
+    var questionType=$("#questionType").val();
+    var answerObject={};
+    let answer=[];
+    var questionData={};
 
+    if(questionType=="Fill-In-The-Blanks")
+    {
+      let n=parseInt($('#noOfFillInTheBlankChoice').val());   
+      
+      //answerObject["Number of Filter"]=n;
+      for(var i=0;i<n;i++)
+      {
+
+        answer.push($("#"+i.toString()).val());
+        console.log("#"+i.toString());
+        //alert($("#"+i.toString()).val());
+      }
+      answerObject["answerFilter"]=answer;
+      questionData={
+        questionName: questionName,
+        questionType: questionType,
+        answerFilter: answerObject
+      }
+
+
+
+      
+    }
+    else if(questionType=="Mutiple Choice")
+    {
+      var n=parseInt($('#noOfmcChoice').val());
+      answerObject["Number of Filter"]=n;
+      let mcAnswerValue=[];
+      $.each($("input[name='mcAnswer[]']:checked"), function(){            
+                mcAnswerValue.push($(this).val());
+            });
+      answerObject["answer"]=mcAnswerValue;
+      let answerFilterValue=[];
+      for(var i=0;i<n;i++)
+      {
+        answerFilterValue.push($("#"+i.toString()).val());
+        //answerObject[i]=$("#"+i.toString()).val();
+        //console.log("#"+i.toString());
+        //alert($("#"+i.toString()).val());
+      }
+      answerObject["answerFilter"]=answerFilterValue;
+      questionData={
+        questionName: questionName,
+        questionType: questionType,
+        answerFilter: answerObject
+      }
+
+
+
+
+    }
+    else
+    {
+        questionData={
+        questionName: questionName,
+        questionType: questionType
+      }
+
+    }
+      let addDoc = db.collection('questions').doc($('#editQuestion').val()).set(questionData).then(function()
+      {
+        console.log("updated!");
+      }
+
+        );
+  }  
+});
+
+
+
+
+//FORM SUBMITTION
+$("#formSubmit").on("click",function()
+{
+  if($("#assignmentForm").valid())
+  {
+    let assignmentFormData={
+      assignmentID: assignmentID,
+      assignmetTopic: $("#assignmetTopic").val(),
+      assignmetDescription: $("#assignmetDescription").val()
+    }
+    db.collection('assignmentForm').add(assignmentFormData).then(ref => {
+      
+        console.log('Added document with ID: ', ref.id);
+    });
+
+  }
+
+
+})
 
 
 
