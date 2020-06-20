@@ -11,7 +11,7 @@ auth.onAuthStateChanged(user => {
 		setupUI(user);
 		});
 		db.collection('assignmentForm').onSnapshot(snapshot => {
-		setupAssignmentList(snapshot.docs);
+			setupAssignmentList(snapshot.docs);
 		}, err => console.log(err.message));
 			} else {
 			//setupUI();
@@ -32,8 +32,9 @@ const setupUI=(user) => {
 
 //setup the assignment List
 const setupAssignmentList=(data) =>
-{
+{	
 	let editTable=$("#assignmentList");
+	editTable.html("");
 	if(data.length)
 	{
 		let i=0;
@@ -57,10 +58,17 @@ const setupAssignmentList=(data) =>
 			editButton.setAttribute("class","btn btn-info justify-content-end");
 			editButton.setAttribute("type","button");
 			editButton.innerHTML="Edit";
+			let clearCookie=document.createElement("button");
+			clearCookie.setAttribute("class","btn btn-info justify-content-end");
+			clearCookie.setAttribute("type","button");
+			clearCookie.innerHTML="clearCookie";
+			
 
 			td3.appendChild(editButton);
 			td3.append(" ");
       		td3.appendChild(deleteButton);
+      		td3.append(" ");
+      		td3.appendChild(clearCookie);
 			tr.appendChild(th);
 			tr.appendChild(td1);
 			tr.appendChild(td2);
@@ -68,10 +76,26 @@ const setupAssignmentList=(data) =>
 
 			deleteButton.addEventListener("click",(e)=>
 			{
-			let id= doc.id;
-			db.collection('assignmentForm').doc(id).delete();
-			tr.remove();
+				let id= doc.id;
+				db.collection('assignmentForm').doc(id).delete();
+				tr.remove();
 			});
+
+			editButton.addEventListener("click", (e)=>
+			{
+				let id= guide.assignmentID;
+				$.cookie('assignmentID', id);  // 创建 cookie
+				window.location.replace("createExercise.html");
+			})
+			clearCookie.addEventListener("click", (e)=>
+			{
+				//let id= guide.assignmentID;
+				$.removeCookie('assignmentID');  
+				//window.location.replace("createExercise.html");
+				alert("cookie is cleared");
+			})
+
+
 			editTable.append(tr);
 
 		});
@@ -84,6 +108,18 @@ const setupAssignmentList=(data) =>
 
 
 }
+
+
+
+
+//create new assignment
+$("#createNewAssignment").on("click",function()
+{
+	$.removeCookie('assignmentID');
+	window.location.replace("createExercise.html");
+
+
+})
 
 
 

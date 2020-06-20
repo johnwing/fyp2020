@@ -57,6 +57,7 @@ $('form[id="questionForm"]').validate({
 
 const uploadDoc = document.querySelector('#addAttachmentList');
 var assignmentID;
+var fireStoreAssignmentID;
 auth.onAuthStateChanged(user => {
   if (user && user !== undefined) {
     console.log("HI"+user);
@@ -64,12 +65,44 @@ auth.onAuthStateChanged(user => {
       user.admin = idTokenResult.claims.admin;
       setupUI(user);
     });
+    //9if($.cookie('name', 'value', { path: '/' });)
+    if($.cookie("assignmentID"))
+    {
+      assignmentID=$.cookie("assignmentID");
+    }
+    else
+    {
+      assignmentID=uuidv4();
+      //create New Document with new assignment ID
+      let assignmentFormData={
+        assignmentID: assignmentID,
+        assignmentTopic: "",
+        assignmentDescription: ""
+      }
+      db.collection('assignmentForm').add(assignmentFormData).then(ref => {
+        
+          console.log('Added document with ID: ', ref.id);
+          fireStoreAssignmentID=ref.id;
+      });
+    }
+
+      db.collection('assignmentForm').onSnapshot(snapshot => {
+        setUpFormTopic(snapshot.docs);
+      }, err => console.log(err.message));
+      db.collection('fileLink').onSnapshot(snapshot => {
+        setupGuides(snapshot.docs);
+      }, err => console.log(err.message));
+      db.collection('questions').onSnapshot(snapshot => {
+        setUpQuestionList(snapshot.docs);
+      }, err => console.log(err.message));
+    /*
     db.collection('fileLink').onSnapshot(snapshot => {
       setupGuides(snapshot.docs);
     }, err => console.log(err.message));
     db.collection('questions').onSnapshot(snapshot => {
       setUpQuestionList(snapshot.docs);
     }, err => console.log(err.message));
+    */
   } else {
    // setupUI();
   //  setupGuides([]);
@@ -81,12 +114,34 @@ auth.onAuthStateChanged(user => {
 
 var userUid;
 
+const setUpFormTopic=(data)=>
+{
+  $("#assignmentTopic").val("");
+  $("#assignmentDescription").val("");
+  if(data.length)
+  {
+    data.forEach(doc =>{
+      let guide=doc.data();
+      if(guide.assignmentID==assignmentID)
+      {
+        fireStoreAssignmentID=doc.id;
+        $("#assignmentTopic").val(guide.assignmentTopic);
+        $("#assignmentDescription").val(guide.assignmentDescription);
+        $("#formSubmit").html("Save Change");
+      }
+      
+    })
+  }
+}
+
+
+
 const setupUI=(user) => {
 
 	console.log("BYB"+user);
 	userUid=user.uid;
   console.log(uuidv4());
-  assignmentID='90c1d8d2-c638-4674-8c15-de7c61d87cfd';
+  //assignmentID='90c1d8d2-c638-4674-8c15-de7c61d87cfd';
 
 }
 const setupGuides = (data) => {
@@ -98,42 +153,45 @@ const setupGuides = (data) => {
     let appendixList=document.createElement("ul");
     appendixList.setAttribute("class","list-group");
 
-
     //let html = '<ul class="list-group">';
     data.forEach(doc => {
       const guide = doc.data();
-      let li=document.createElement("li");
-      li.setAttribute("class","list-group-item");
-      let documentLink=document.createElement("a");
-      documentLink.setAttribute("href",guide.link);
-      documentLink.innerHTML=guide.name;
-      let deleteButton=document.createElement("button");
-      deleteButton.setAttribute("class","btn btn-info justify-content-end");
-      deleteButton.setAttribute("type","button");
-      deleteButton.innerHTML="Delete";
-
-      li.appendChild(documentLink);
-      li.appendChild(deleteButton);
-      appendixList.appendChild(li);
-      //let myArray = Object.values(doc);
-      //deleteFile
-      deleteButton.addEventListener("click",(e)=>
+      console.log("GUIDE"+guide.assignmentID);
+      console.log("Cookie"+assignmentID);
+      if(guide.assignmentID==assignmentID)
       {
-        let id= doc.id;
-        let deleteFile=storageRef.child(guide.salt+guide.name);
-        deleteFile.delete().then(function() {
-            // File deleted successfully
-            console.log("OK");
-          }).catch(function(error) {
-            console.log(" Uh-oh, an error occurred!");
-          });
-        db.collection('fileLink').doc(id).delete();
+        
+        let li=document.createElement("li");
+        li.setAttribute("class","list-group-item");
+        let documentLink=document.createElement("a");
+        documentLink.setAttribute("href",guide.link);
+        documentLink.innerHTML=guide.name;
+        let deleteButton=document.createElement("button");
+        deleteButton.setAttribute("class","btn btn-info justify-content-end");
+        deleteButton.setAttribute("type","button");
+        deleteButton.innerHTML="Delete";
 
-        li.remove();
-      });
+        li.appendChild(documentLink);
+        li.appendChild(deleteButton);
+        appendixList.appendChild(li);
+        //let myArray = Object.values(doc);
+        //deleteFile
+        deleteButton.addEventListener("click",(e)=>
+        {
+          let id= doc.id;
+          let deleteFile=storageRef.child(guide.salt+guide.name);
+          deleteFile.delete().then(function() {
+              // File deleted successfully
+              console.log("OK");
+            }).catch(function(error) {
+              console.log(" Uh-oh, an error occurred!");
+            });
+          db.collection('fileLink').doc(id).delete();
 
-
-
+          li.remove();
+        });
+      }
+      
     });
     uploadDoc.appendChild(appendixList);
 
@@ -149,193 +207,167 @@ const setUpQuestionList=(data)=>
   $('#addQuestionList').html("");
   if(data.length)
   {
+      let appendixList=document.createElement("table");
+      appendixList.setAttribute("class","table table-striped");
+      appendixList.id="questionList";
+      //let th1=document
+      appendixList.innerHTML=
+        `<thead>
+          <th scope="col">#</th>
+          <th scope="col">Question</th>
+          <th scope="col">Type</th>
+          <th scope="col">Answer Filter</th>
+          <th scope="col">Delete</th>
+        </thead>
+          `;
+      let tbody=document.createElement("tbody");      
+      let noOfQuestion=0;
+      data.forEach(doc => {
+        let checkQuestionQuery=db.collection("assignmentQuestionRelation").where("assignmentID","==",assignmentID);
+        let querySnapshot =checkQuestionQuery.get().then(snapshot => {
+          if (snapshot.empty) {
+            console.log('No matching documents.');
+            return;
+          }  
 
-    let appendixList=document.createElement("table");
-    appendixList.setAttribute("class","table table-striped");
-    appendixList.id="questionList";
-    //let th1=document
-    appendixList.innerHTML=
-      `<thead>
-        <th scope="col">#</th>
-        <th scope="col">Question</th>
-        <th scope="col">Type</th>
-        <th scope="col">Answer Filter</th>
-        <th scope="col">Delete</th>
-      </thead>
-        `;
-    let tbody=document.createElement("tbody");
-    
-
-
-
-    let noOfQuestion=0;
-    data.forEach(doc => {
-      const guide = doc.data();
-      let tr=document.createElement("tr");
-      let th=document.createElement("th");
-      th.setAttribute("scope","row");
-      noOfQuestion=noOfQuestion+1;
-      th.innerHTML=noOfQuestion;
-      let td3=document.createElement("td");
-     // td.setAttribute("class","left");
-      
-      td3.innerHTML=guide.questionType;
-      //+`<br/>`+doc.id;+
-
-      let td2=document.createElement("td");
-      td2.innerHTML=guide.questionName;
-
-      let td4=document.createElement("td");
-      if(guide.questionType=="Mutiple Choice")
-      {
-        td4.append("Option(s)");
-        let ul=document.createElement("ol");
-        ul.setAttribute("type","A");
-        //let li=document.createElement("li");
-
-        let answerFilter=guide.answerFilter;
         
-        for(var i=0;i<answerFilter.answerFilter.length;i++)
+        const guide = doc.data();
+        console.log("GUIDE"+guide.assignmentID);
+        console.log("Cookie"+assignmentID);
+        //if(guide.assignmentID==assignmentID)
         {
-          let li=document.createElement("li");
-          li.innerHTML=answerFilter.answerFilter[i];
-          //answer.push(String.fromCharCode(parseInt(answerFilter.answer[i])+65)); 
-          //li.innerHTML=String.fromCharCode(parseInt(answerFilter.answer[i])+65);          
-          ul.append(li);
-        }
-        td4.append(ul);
-        let answer=[];
-        for(var i=0;i<answerFilter.answer.length;i++)
-        {
-          answer.push(String.fromCharCode(parseInt(answerFilter.answer[i])+65));
-        }
-        td4.append("Answer: "+answer);
-        //td4.innerHTML=answer;
-        console.log(answer);
-
-      }
-      else if(guide.questionType=="Fill-In-The-Blanks")
-      {
-        td4.append("Option(s)");
-        let ul=document.createElement("ul");
-        //ul.setAttribute("type","A");
-        //let li=document.createElement("li");
-
-        let answerFilter=guide.answerFilter;
-        
-        for(var i=0;i<answerFilter.answerFilter.length;i++)
-        {
-          let li=document.createElement("li");
-          li.innerHTML=answerFilter.answerFilter[i];
-          //answer.push(String.fromCharCode(parseInt(answerFilter.answer[i])+65)); 
-          //li.innerHTML=String.fromCharCode(parseInt(answerFilter.answer[i])+65);          
-          ul.append(li);
-        }
-        td4.append(ul);        
-
-
-
-      }
-
-      
-
-      let td5=document.createElement("td");
-
-      let deleteButton=document.createElement("button");
-      deleteButton.setAttribute("class","btn btn-info justify-content-end");
-      deleteButton.setAttribute("type","button");
-      deleteButton.innerHTML="Delete";
-      let editButton=document.createElement("button");
-      editButton.setAttribute("class","btn btn-info justify-content-end");
-      editButton.setAttribute("type","button");
-      editButton.innerHTML="Edit";
-
-
-
-      td5.appendChild(editButton);
-      td5.append(" ");
-      td5.appendChild(deleteButton);
-
-      
-      tr.append(th,td2,td3,td4,td5);
-
-  //delete question
-      deleteButton.addEventListener("click",(e)=>
-      {
-        let id= doc.id;
-        db.collection('questions').doc(id).delete();
-
-      //find the data relation in the DB and remove it
-        let relationDB = db.collection('assignmentQuestionRelation');
-        
-       // alert(assignmentID);
-        let targetFieldID="";
-        let query = relationDB.where('questionID', '==', doc.id).where('assignmentID', '==', assignmentID).get().then(snapshot => {
-            if (snapshot.empty) {
-              console.log('No matching documents.');
-              return;
-            }  
-
-            snapshot.forEach(doc => {
-              console.log(doc.id, '=>', doc.data());
-              targetFieldID=doc.id;
-             // dele
-            });
-          }).then(function()
-          {
-            // alert(targetFieldID);
-             db.collection('assignmentQuestionRelation').doc(targetFieldID).delete();
-
-          })
-          .catch(err => {
-            console.log('Error getting documents', err);
-          });
          
-
-
-
-
-
-
-        tr.remove();
-      });
- 
-//edit Question
-      editButton.addEventListener("click",(e)=>
-      {
-        $('#editQuestion').show();
-        $('#editQuestion').val(doc.id);
-        let answerFilter=guide.answerFilter;
-        let id= doc.id;
-        $("#addNewQuestion").click();
-        $("#questionName").val(guide.questionName);
-        $("#questionType").val(guide.questionType);
-        $('#questionType').change();
-        if(guide.questionType=="Mutiple Choice")
-        {
-          $("#noOfmcChoice").val(guide.answerFilter.answerFilter.length);
-          $("#noOfmcChoice").change();
+          let tr=document.createElement("tr");
+          let th=document.createElement("th");
+          th.setAttribute("scope","row");
+          noOfQuestion=noOfQuestion+1;
+          th.innerHTML=noOfQuestion;
+          let td3=document.createElement("td");
+         // td.setAttribute("class","left");
           
-          
-          for(var i=0;i<answerFilter.answerFilter.length;i++)
+          td3.innerHTML=guide.questionType;
+          //+`<br/>`+doc.id;+
+
+          let td2=document.createElement("td");
+          td2.innerHTML=guide.questionName;
+
+          let td4=document.createElement("td");
+          if(guide.questionType=="Mutiple Choice")
           {
+            td4.append("Option(s)");
+            let ul=document.createElement("ol");
+            ul.setAttribute("type","A");
+            //let li=document.createElement("li");
+
+            let answerFilter=guide.answerFilter;
             
-            $("#"+i.toString()).val(answerFilter.answerFilter[i]);
-            
+            for(var i=0;i<answerFilter.answerFilter.length;i++)
+            {
+              let li=document.createElement("li");
+              li.innerHTML=answerFilter.answerFilter[i];
+              //answer.push(String.fromCharCode(parseInt(answerFilter.answer[i])+65)); 
+              //li.innerHTML=String.fromCharCode(parseInt(answerFilter.answer[i])+65);          
+              ul.append(li);
+            }
+            td4.append(ul);
+            let answer=[];
+            for(var i=0;i<answerFilter.answer.length;i++)
+            {
+              answer.push(String.fromCharCode(parseInt(answerFilter.answer[i])+65));
+            }
+            td4.append("Answer: "+answer);
+            //td4.innerHTML=answer;
+            console.log(answer);
+
           }
-          $.each($("input[name='mcAnswer[]']"), function(){            
-                if(answerFilter.answer.includes($(this).val()))
-                  {
-                    $(this).prop('checked', true);
-                  };              
-            });
+          else if(guide.questionType=="Fill-In-The-Blanks")
+          {
+            td4.append("Option(s)");
+            let ul=document.createElement("ul");
+            //ul.setAttribute("type","A");
+            //let li=document.createElement("li");
+
+            let answerFilter=guide.answerFilter;
+            
+            for(var i=0;i<answerFilter.answerFilter.length;i++)
+            {
+              let li=document.createElement("li");
+              li.innerHTML=answerFilter.answerFilter[i];
+              //answer.push(String.fromCharCode(parseInt(answerFilter.answer[i])+65)); 
+              //li.innerHTML=String.fromCharCode(parseInt(answerFilter.answer[i])+65);          
+              ul.append(li);
+            }
+            td4.append(ul);        
+          }
+          let td5=document.createElement("td");
+
+          let deleteButton=document.createElement("button");
+          deleteButton.setAttribute("class","btn btn-info justify-content-end");
+          deleteButton.setAttribute("type","button");
+          deleteButton.innerHTML="Delete";
+          let editButton=document.createElement("button");
+          editButton.setAttribute("class","btn btn-info justify-content-end");
+          editButton.setAttribute("type","button");
+          editButton.innerHTML="Edit";
 
 
-        }
-        else if(guide.questionType=="Fill-In-The-Blanks")
+
+          td5.appendChild(editButton);
+          td5.append(" ");
+          td5.appendChild(deleteButton);
+
+          
+          tr.append(th,td2,td3,td4,td5);
+
+      //delete question
+          deleteButton.addEventListener("click",(e)=>
+          {
+            let id= doc.id;
+            db.collection('questions').doc(id).delete();
+
+          //find the data relation in the DB and remove it
+            let relationDB = db.collection('assignmentQuestionRelation');
+            
+           // alert(assignmentID);
+            let targetFieldID="";
+            let query = relationDB.where('questionID', '==', doc.id).where('assignmentID', '==', assignmentID).get().then(snapshot => {
+                if (snapshot.empty) {
+                  console.log('No matching documents.');
+                  return;
+                }  
+
+                snapshot.forEach(doc => {
+                  console.log(doc.id, '=>', doc.data());
+                  targetFieldID=doc.id;
+                 // dele
+                });
+              }).then(function()
+              {
+                // alert(targetFieldID);
+                 db.collection('assignmentQuestionRelation').doc(targetFieldID).delete();
+
+              })
+              .catch(err => {
+                console.log('Error getting documents', err);
+              });
+            tr.remove();
+        });
+   
+  //edit Question
+        editButton.addEventListener("click",(e)=>
         {
-            $("#noOfFillInTheBlankChoice").val(guide.answerFilter.answerFilter.length);
-            $("#noOfFillInTheBlankChoice").change();
+          $('#editQuestion').show();
+          $('#editQuestion').val(doc.id);
+          let answerFilter=guide.answerFilter;
+          let id= doc.id;
+          $("#addNewQuestion").click();
+          $("#questionName").val(guide.questionName);
+          $("#questionType").val(guide.questionType);
+          $('#questionType').change();
+          if(guide.questionType=="Mutiple Choice")
+          {
+            $("#noOfmcChoice").val(guide.answerFilter.answerFilter.length);
+            $("#noOfmcChoice").change();
             
             
             for(var i=0;i<answerFilter.answerFilter.length;i++)
@@ -343,24 +375,45 @@ const setUpQuestionList=(data)=>
               
               $("#"+i.toString()).val(answerFilter.answerFilter[i]);
               
-            }  
-        }
+            }
+            $.each($("input[name='mcAnswer[]']"), function(){            
+                  if(answerFilter.answer.includes($(this).val()))
+                    {
+                      $(this).prop('checked', true);
+                    };              
+              });
+
+
+          }
+          else if(guide.questionType=="Fill-In-The-Blanks")
+          {
+              $("#noOfFillInTheBlankChoice").val(guide.answerFilter.answerFilter.length);
+              $("#noOfFillInTheBlankChoice").change();
+              
+              
+              for(var i=0;i<answerFilter.answerFilter.length;i++)
+              {
+                
+                $("#"+i.toString()).val(answerFilter.answerFilter[i]);
+                
+              }  
+          }
         
-
-
-        //$("#addQuestion").innerHTML=""
-        
-        //$("#addQuestion").val(doc.id);
-        //alert(doc.id);
-
-
-        
-      });
+        });
+        tbody.appendChild(tr);
+      }
 
 
 
 
-      tbody.appendChild(tr);
+
+
+        })
+        .catch(err => {
+          console.log('Error getting documents', err);
+        });
+//
+
     });
     appendixList.appendChild(tbody);
     //appendixList.append()
@@ -763,9 +816,12 @@ $("#formSubmit").on("click",function()
       assignmentTopic: $("#assignmentTopic").val(),
       assignmentDescription: $("#assignmentDescription").val()
     }
-    db.collection('assignmentForm').add(assignmentFormData).then(ref => {
+    db.collection('assignmentForm').doc(fireStoreAssignmentID).set(assignmentFormData).then(ref => {
       
-        console.log('Added document with ID: ', ref.id);
+        console.log('Added document with ID: ');
+        alert("Assignment Saved!");
+        $.removeCookie('assignmentID');
+        window.location.replace("teacherHomepage.html");
     });
 
   }
