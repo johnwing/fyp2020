@@ -77,7 +77,8 @@ auth.onAuthStateChanged(user => {
       let assignmentFormData={
         assignmentID: assignmentID,
         assignmentTopic: "",
-        assignmentDescription: ""
+        assignmentDescription: "",
+        userID: userUid
       }
       db.collection('assignmentForm').add(assignmentFormData).then(ref => {
         
@@ -145,7 +146,7 @@ const setupUI=(user) => {
 
 }
 const setupGuides = (data) => {
-    uploadDoc.innerHTML="";
+  uploadDoc.innerHTML="";
   //var uploadDoc=$('#addAttachmentList');
   if (data.length) {
 
@@ -223,17 +224,18 @@ const setUpQuestionList=(data)=>
       let tbody=document.createElement("tbody");      
       let noOfQuestion=0;
       data.forEach(doc => {
-        let checkQuestionQuery=db.collection("assignmentQuestionRelation").where("assignmentID","==",assignmentID);
-        let querySnapshot =checkQuestionQuery.get().then(snapshot => {
-          if (snapshot.empty) {
-            console.log('No matching documents.');
-            return;
-          }  
+        let checkQuestionQuery=db.collection("assignmentQuestionRelation").where("assignmentID","==",assignmentID).where("questionID","==",doc.id);
+        let querySnapshot =checkQuestionQuery.get().then(snapshot => { 
+          snapshot.forEach(doc2 => {
+            console.log(doc2.id, '=>', doc2.data());
+
+
+     {
 
         
         const guide = doc.data();
-        console.log("GUIDE"+guide.assignmentID);
-        console.log("Cookie"+assignmentID);
+        //console.log("GUIDE"+guide.assignmentID);
+        //console.log("Cookie"+assignmentID);
         //if(guide.assignmentID==assignmentID)
         {
          
@@ -402,16 +404,31 @@ const setUpQuestionList=(data)=>
         });
         tbody.appendChild(tr);
       }
+    }
 
 
 
 
 
 
+
+
+
+          });
         })
         .catch(err => {
           console.log('Error getting documents', err);
         });
+         
+      //create start    
+ 
+
+
+    
+
+
+
+       
 //
 
     });
@@ -651,7 +668,8 @@ $('#addQuestion').on("click",function()
       questionData={
         questionName: questionName,
         questionType: questionType,
-        answerFilter: answerObject
+        answerFilter: answerObject,
+        userID: userUid
       }
 
 
@@ -679,7 +697,8 @@ $('#addQuestion').on("click",function()
       questionData={
         questionName: questionName,
         questionType: questionType,
-        answerFilter: answerObject
+        answerFilter: answerObject,
+        userID: userUid
       }
 
 
@@ -690,7 +709,8 @@ $('#addQuestion').on("click",function()
     {
         questionData={
         questionName: questionName,
-        questionType: questionType
+        questionType: questionType,
+        userID: userUid
       }
 
     }
@@ -707,6 +727,7 @@ $('#addQuestion').on("click",function()
         db.collection('assignmentQuestionRelation').add(relationData).then(ref => {
         
           console.log('Added relationship with ID: ', ref.id);
+          $("#closeModal").click();
 
         });
 
@@ -797,6 +818,7 @@ $('#editQuestion').on("click",function()
       let addDoc = db.collection('questions').doc($('#editQuestion').val()).set(questionData).then(function()
       {
         console.log("updated!");
+        $("#closeModal").click();
       }
 
         );
@@ -814,7 +836,8 @@ $("#formSubmit").on("click",function()
     let assignmentFormData={
       assignmentID: assignmentID,
       assignmentTopic: $("#assignmentTopic").val(),
-      assignmentDescription: $("#assignmentDescription").val()
+      assignmentDescription: $("#assignmentDescription").val(),
+      userID: userUid
     }
     db.collection('assignmentForm').doc(fireStoreAssignmentID).set(assignmentFormData).then(ref => {
       

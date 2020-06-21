@@ -29,7 +29,8 @@ auth.onAuthStateChanged(user => {
 //status
 //var loginstatus
 
-//google signup
+//google signup - old Version
+/*
 const googleSignupForm = document.querySelector('#google-signup-form');
 googleSignupForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -64,9 +65,47 @@ googleSignupForm.addEventListener('submit', (e) => {
 
     console.log(errorMessage);
   });
-
-
 });
+*/
+
+//login - new version
+$("#loginButton").on("click", function()
+{
+  console.log("googleLogin");
+  //sign in by redirecting to the sign-in page
+  auth.signInWithRedirect(provider);
+  auth.getRedirectResult().then(function(result) {
+  if (result.credential) {
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    var token = result.credential.accessToken;
+    // ...
+    console.log(token);
+    // The signed-in user info.
+      var user = result.user;
+      db.collection('guides').add({
+        title: "testing",
+        content: "hq"
+      }).catch(err => {
+        console.log(err.message);
+      });
+  }
+  }).catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // The email of the user's account used.
+    var email = error.email;
+    // The firebase.auth.AuthCredential type that was used.
+    var credential = error.credential;
+    // ...
+
+    console.log(errorMessage);
+  });
+})
+
+
+
+
 
 
 // logout
