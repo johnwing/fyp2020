@@ -3,19 +3,24 @@ jQuery.validator.setDefaults({
 	success: "valid"
 });
 
+
+
+
+
+
 // website setup
 auth.onAuthStateChanged(user => {
+	setUpNavBar();
 	if (user) 
 	{
+		
 		user.getIdTokenResult().then(idTokenResult => {
 			user.admin = idTokenResult.claims.admin;
 			setupUI(user);
 			});
 	} else 
 	{
-			//setupUI();
-			//setupGuides([]);
-		$("body").html("Login is required.");
+
 	}
 });
 
@@ -29,6 +34,7 @@ const setupUI=(user) => {
 
 }
 
+/*
 $("#loginButton").on("click",function()
 {
 	if(userUid)
@@ -36,5 +42,5 @@ $("#loginButton").on("click",function()
 		alert(userUid);
 	}
 })
-
+*/
 

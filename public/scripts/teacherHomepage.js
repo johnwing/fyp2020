@@ -23,10 +23,8 @@ auth.onAuthStateChanged(user => {
 var userUid;
 
 const setupUI=(user) => {
-
 	console.log(user.uid);
 	userUid=user.uid;
-
 
 }
 
