@@ -33,8 +33,9 @@ var navBarHtml=`<!--Login Navbar-->
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>  
+      <span class="btn btn-secondary my-2 my-sm-0" id="Name"></div>
+      <!--input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button-->  
       <button class="btn btn-outline-success my-2 my-sm-0" id="loginButton" type="button" style="display:none">Login</button>
       <button class="btn btn-outline-success my-2 my-sm-0" id="logoutButton" type="button" style="display:none">Logout</button>
     </form>
@@ -105,6 +106,8 @@ auth.onAuthStateChanged(user => {
   if (user) {
     $("#logoutButton").show();
     $("#loginButton").hide();
+    $("#Name").show();
+    $("#Name").append(user.displayName);
     user.getIdTokenResult().then(idTokenResult => {
       user.admin = idTokenResult.claims.admin;
       checkUserRegister(user);
@@ -115,6 +118,7 @@ auth.onAuthStateChanged(user => {
     }, err => console.log(err.message));
     */
   } else {
+    $("#Name").hide();
     $("#logoutButton").hide();
     $("#loginButton").show();
     //setupUI();
@@ -134,8 +138,8 @@ auth.onAuthStateChanged(user => {
 
 const checkUserRegister=(user)=>{
 
-  console.log(user.providerData);
-  //alert(user.uid);
+  //console.log(user.providerData);
+  console.log(user.uid);
 
 }
 

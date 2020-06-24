@@ -13,7 +13,20 @@ ui.start('#firebaseui-auth-container', {
 auth.onAuthStateChanged(user => {
 	if(user)
 	{
-		window.location.replace("/teacherHomepage.html");
+		let userData={
+			displayName: user.displayName,
+			email: user.email,
+			photoURL: user.photoURL,
+			providerData: user.providerData,
+			providerId: user.providerId,
+			uid: user.uid
+		}
+		db.collection("userData").doc(user.uid).set(userData).then(function()
+		{
+			alert("OK");
+			window.location.replace("/teacherHomepage.html");
+		});
+		
 	}
 
 })
