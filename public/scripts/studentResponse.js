@@ -24,6 +24,17 @@ let getDoc=targetAssignmentDbRef.get().then(snapshot =>{
 })
 
 
+// listen for auth status changes
+var userID;
+auth.onAuthStateChanged(user => {
+  if (user) 
+  {
+  	userID=user.uid;
+  }
+})
+
+
+
 //save assignment topic to question list
 var questionList=[];
 let questionID;
@@ -41,6 +52,15 @@ assignmentQuestionRelationDbRef.get().then(collections =>{
 	})
 })
 
+$("#startAssignmentButton").on("click",function(){
+	if($("#question"+0).length)
+	{
+		$("#question"+0).show();
+		$("#startAssignmentButton").hide();
+	}
+
+})
+
 
 function hello()
 {
@@ -49,6 +69,8 @@ function hello()
 	let questionTable=document.createElement("div");
 	questionTable.setAttribute("id","question"+tempi);
 	questionTable.setAttribute("class","justify-content-between questionInPage");
+	questionTable.style.display="none";
+	questionTable.innerHTML=`<h3>Question `+(tempi+1)+`</h3>`;
 	let questionTopic=document.createElement("h5");
 	questionTopic.class="mb-1";
 	questionTopic.innerText=questionList[tempi].questionName;
@@ -63,10 +85,10 @@ function hello()
 			let checkBoxInput=document.createElement("input");
 			checkBoxInput.setAttribute("type","checkbox");
 			checkBoxInput.setAttribute("value",j);
-			checkBoxInput.setAttribute("name",tempi+"_"+j);
+			checkBoxInput.setAttribute("name","question_"+tempi);
 			let checkboxLabel=document.createElement("label");
 			checkboxLabel.setAttribute("class","font-weight-light");
-			checkboxLabel.setAttribute("for",tempi+"_"+j);
+			checkboxLabel.setAttribute("for","question_"+tempi);
 			checkboxLabel.innerText=option;
 
 			questionTopic.appendChild(p);
@@ -87,7 +109,7 @@ function hello()
 			let br=document.createElement("br");
 			let inputTextbox=document.createElement("textarea");
 			inputTextbox.setAttribute("class","form-control");
-			inputTextbox.setAttribute("name",tempi+"_"+1);
+			inputTextbox.setAttribute("name","question_"+tempi);
 			questionTopic.appendChild(br);
 			questionTopic.appendChild(inputTextbox);
 	}
@@ -95,116 +117,151 @@ function hello()
 	let nextQuestionButton=document.createElement("button");
 	nextQuestionButton.setAttribute("class","btn btn-info");
 	nextQuestionButton.innerText="Next Question";
+	
+	let previousQuestionButton=document.createElement("button");
+	previousQuestionButton.setAttribute("class","btn btn-secondary");
+	previousQuestionButton.innerText="Previous Question";
+
+	let reviewLaterDiv=document.createElement("div");
+	reviewLaterDiv.innerHTML=`
+	<div class="input-group mb-3">
+	  <div class="input-group-prepend">
+	    <div class="input-group-text">
+	      <input type="checkbox" value=`+tempi+` aria-label="Checkbox for following text input">
+	    </div>
+	  </div>
+	  <div class="form-control">Tick this checkbox for reminding double check before submit.</div>
+	</div>`;
+
+
 
 	questionTopic.appendChild(br);
+	questionTopic.appendChild(br);
+	questionTopic.appendChild(reviewLaterDiv);
+	
+	if(tempi>0)
+	{
+		questionTopic.appendChild(previousQuestionButton);		
+	}
 	questionTopic.appendChild(nextQuestionButton);
 	questionTable.appendChild(questionTopic);
 	let questionDisplay=document.querySelector("#page");
 	questionDisplay.appendChild(questionTable);
 	console.log(questionTable);
 
-	nextQuestionButton.addEventListener("click",(e)=>
+	previousQuestionButton.addEventListener("click",(e)=>
     {
-    	alert(questionList[tempi].questionName);
+    	//alert(questionList[tempi].questionName);
+    	$("#question"+(tempi)).hide();
+    	$("#question"+(tempi-1)).show();
     })
 
-    //questionTable.setAttribute("style","display: none");
 
 
 
-	/*
-	questionList.foreach((question)=>{
-		console.log(question);
-	})
-	*/
+	nextQuestionButton.addEventListener("click",(e)=>
+    {
+    	//alert(questionList[tempi].questionName);
+    	$("#question"+(tempi)).hide();
+    	$("#question"+(tempi+1)).show();
+    	let answeredValue=[];
+    	if(questionList[tempi].questionType=="Mutiple Choice")
+    	{
+			$('input[name=question_'+tempi+']:checked').each(function()
+			{
+			  answeredValue.push($(this).val());
+			});
+			  		
+    	}
+    	else
+    	{
+    		answeredValue.push($("textarea[name=question_"+tempi+"]").val());
+    	}
+    	console.log(answeredValue);  
+    	//let update
+    	let saveAnswerDB=db.collection("studentAnswer").doc(userID+assignmentID+tempi);
+    	let saveAnswerAction=saveAnswerDB.set({answer : answeredValue});
+    	console.log('Added document with ID: ', saveAnswerAction.id);
+    	
 
+
+
+    	if($("#question"+(tempi+1)).length<=0)
+    	{
+    		let endDiv=document.createElement("div");
+    		endDiv.setAttribute("class","container-fluid border border-secondary");
+    		endDiv.setAttribute("id","question"+(tempi+1));
+    		endDiv.innerText="All Questions have been answered. Click Sumbit to exit."
+    		
+//display answer
+	      let appendixList=document.createElement("table");
+	      appendixList.setAttribute("class","table table-striped");
+	      appendixList.id="questionList";
+	      //let th1=document
+	      appendixList.innerHTML=
+	        `<thead>
+	          <th scope="col">#</th>
+	          <th scope="col">Question</th>
+	          <th scope="col">Your Answer</th>
+	          <th scope="col">Edit</th>
+	        </thead>
+	          `;
+	      let tbody=document.createElement("tbody");      
+	      let questionNo=0;
+	      for(questionNo=0;questionNo<=tempi;questionNo++)
+	      {
+	          let tr=document.createElement("tr");
+	          let th=document.createElement("th");
+	          th.setAttribute("scope","row");
+	          let noOfQuestion=questionNo+1;
+	          th.innerHTML=noOfQuestion;
+	          let td2=document.createElement("td");
+	          td2.innerText=questionList[questionNo].questionName;
+	          let td3=document.createElement("td");
+	          let answeredValue=[];
+				if(questionList[questionNo].questionType=="Mutiple Choice")
+		    	{
+					$('input[name=question_'+questionNo+']:checked').each(function()
+					{
+					  answeredValue.push($(this).val());
+					});
+					  		
+		    	}
+		    	else
+		    	{
+		    		answeredValue.push($("textarea[name=question_"+questionNo+"]").val());
+			    }
+			  td3.innerText=answeredValue;
+			  let td4=document.createElement("td");
+			  tr.append(th,td2,td3,td4);
+			  tbody.appendChild(tr);
+			}
+
+			appendixList.appendChild(tbody);
+
+
+
+
+    		let endButton=document.createElement("button");
+    		endButton.setAttribute("class","btn btn-info");
+    		endButton.innerText="Submit";
+    		let br=document.createElement("br");
+    		let previousQuestionButton2=document.createElement("button");
+			previousQuestionButton2.setAttribute("class","btn btn-secondary");
+			previousQuestionButton2.innerText="Previous Question";
+    		endDiv.appendChild(br);
+    		endDiv.appendChild(appendixList);
+    		endDiv.appendChild(br);
+    		endDiv.appendChild(previousQuestionButton2);
+    		endDiv.appendChild(endButton);
+    		endDiv.appendChild(br);
+    		$("#question"+(tempi)).after(endDiv);
+    		previousQuestionButton2.addEventListener("click",(e)=>{
+    			$("#question"+(tempi+1)).hide();
+    			$("#question"+(tempi)).show();
+    		})
+    	}
+    })
 }
-//console.log("HI"+questionList);
 
-function displayQuestions()
-{
-
-}
-
-
-
-
-//test page divide
-'use strict';
-
-var numberOfItems = $('#page .list-group').length; // Get total number of the items that should be paginated
-var limitPerPage = 4; // Limit of items per each page
-$('#page .list-group:gt(' + (limitPerPage - 1) + ')').hide(); // Hide all items over page limits (e.g., 5th item, 6th item, etc.)
-var totalPages = Math.round(numberOfItems / limitPerPage); // Get number of pages
-$(".pagination").append("<li class='current-page active'><a href='javascript:void(0)'>" + 1 + "</a></li>"); // Add first page marker
-
-// Loop to insert page number for each sets of items equal to page limit (e.g., limit of 4 with 20 total items = insert 5 pages)
-for (var kk = 2; kk <= totalPages; kk++) {
-  $(".pagination").append("<li class='current-page'><a href='javascript:void(0)'>" + kk + "</a></li>"); // Insert page number into pagination tabs
-}
-
-// Add next button after all the page numbers  
-$(".pagination").append("<li id='next-page'><a href='javascript:void(0)' aria-label=Next><span aria-hidden=true>&raquo;</span></a></li>");
-
-// Function that displays new items based on page number that was clicked
-$(".pagination li.current-page").on("click", function() {
-  // Check if page number that was clicked on is the current page that is being displayed
-  if ($(this).hasClass('active')) {
-    return false; // Return false (i.e., nothing to do, since user clicked on the page number that is already being displayed)
-  } else {
-    var currentPage = $(this).index(); // Get the current page number
-    $(".pagination li").removeClass('active'); // Remove the 'active' class status from the page that is currently being displayed
-    $(this).addClass('active'); // Add the 'active' class status to the page that was clicked on
-    $("#page .list-group").hide(); // Hide all items in loop, this case, all the list groups
-    var grandTotal = limitPerPage * currentPage; // Get the total number of items up to the page number that was clicked on
-
-    // Loop through total items, selecting a new set of items based on page number
-    for (var kk = grandTotal - limitPerPage; kk < grandTotal; kk++) {
-      $("#page .list-group:eq(" + kk + ")").show(); // Show items from the new page that was selected
-    }
-  }
-
-});
-
-// Function to navigate to the next page when users click on the next-page id (next page button)
-$("#next-page").on("click", function() {
-  var currentPage = $(".pagination li.active").index(); // Identify the current active page
-  // Check to make sure that navigating to the next page will not exceed the total number of pages
-  if (currentPage === totalPages) {
-    return false; // Return false (i.e., cannot navigate any further, since it would exceed the maximum number of pages)
-  } else {
-    currentPage++; // Increment the page by one
-    $(".pagination li").removeClass('active'); // Remove the 'active' class status from the current page
-    $("#page .list-group").hide(); // Hide all items in the pagination loop
-    var grandTotal = limitPerPage * currentPage; // Get the total number of items up to the page that was selected
-
-    // Loop through total items, selecting a new set of items based on page number
-    for (var kk = grandTotal - limitPerPage; kk < grandTotal; kk++) {
-      $("#page .list-group:eq(" + kk + ")").show(); // Show items from the new page that was selected
-    }
-
-    $(".pagination li.current-page:eq(" + (currentPage - 1) + ")").addClass('active'); // Make new page number the 'active' page
-  }
-});
-
-// Function to navigate to the previous page when users click on the previous-page id (previous page button)
-$("#previous-page").on("click", function() {
-  var currentPage = $(".pagination li.active").index(); // Identify the current active page
-  // Check to make sure that users is not on page 1 and attempting to navigating to a previous page
-  if (currentPage === 1) {
-    return false; // Return false (i.e., cannot navigate to a previous page because the current page is page 1)
-  } else {
-    currentPage--; // Decrement page by one
-    $(".pagination li").removeClass('active'); // Remove the 'activate' status class from the previous active page number
-    $("#page .list-group").hide(); // Hide all items in the pagination loop
-    var grandTotal = limitPerPage * currentPage; // Get the total number of items up to the page that was selected
-
-    // Loop through total items, selecting a new set of items based on page number
-    for (var kk = grandTotal - limitPerPage; kk < grandTotal; kk++) {
-      $("#page .list-group:eq(" + kk + ")").show(); // Show items from the new page that was selected
-    }
-
-    $(".pagination li.current-page:eq(" + (currentPage - 1) + ")").addClass('active'); // Make new page number the 'active' page
-  }
-});
 	
