@@ -1,4 +1,5 @@
 
+
 var assignmentID="";
 //init Setting
 assignmentID="f1b924d6-10c3-4747-8efd-751db118b170";
@@ -30,6 +31,14 @@ auth.onAuthStateChanged(user => {
   if (user) 
   {
   	userID=user.uid;
+	let today = new Date();
+	let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()+' '+today.getHours()+':'+today.getMinutes();
+
+	let startAnswerDB=db.collection("submitAssignment").doc(userID+assignmentID);
+	let startAnswer=startAnswerDB.set({startTime: date});
+
+
+
   }
 })
 
@@ -39,6 +48,7 @@ auth.onAuthStateChanged(user => {
 var questionList=[];
 let questionID;
 let i=-1;
+
 let assignmentQuestionRelationDbRef=db.collection("assignmentQuestionRelation").where("assignmentID","==",assignmentID);
 assignmentQuestionRelationDbRef.get().then(collections =>{
 	collections.forEach(collection =>{
@@ -51,6 +61,10 @@ assignmentQuestionRelationDbRef.get().then(collections =>{
 		}).then(()=>hello());
 	})
 })
+
+
+
+
 
 $("#startAssignmentButton").on("click",function(){
 	if($("#question"+0).length)
@@ -178,6 +192,7 @@ function hello()
     		answeredValue.push($("textarea[name=question_"+tempi+"]").val());
     	}
     	console.log(answeredValue);  
+    	console.log($("#showAnswer"+tempi).innerText); 
     	//let update
     	let saveAnswerDB=db.collection("studentAnswer").doc(userID+assignmentID+tempi);
     	let saveAnswerAction=saveAnswerDB.set({answer : answeredValue});
@@ -186,9 +201,13 @@ function hello()
 
 
 
+
+
     	if($("#question"+(tempi+1)).length<=0)
     	{
+
     		let endDiv=document.createElement("div");
+    		endDiv.innerHTML="";
     		endDiv.setAttribute("class","container-fluid border border-secondary");
     		endDiv.setAttribute("id","question"+(tempi+1));
     		endDiv.innerText="All Questions have been answered. Click Sumbit to exit."
@@ -210,6 +229,7 @@ function hello()
 	      let questionNo=0;
 	      for(questionNo=0;questionNo<=tempi;questionNo++)
 	      {
+	      	
 	          let tr=document.createElement("tr");
 	          let th=document.createElement("th");
 	          th.setAttribute("scope","row");
@@ -218,12 +238,13 @@ function hello()
 	          let td2=document.createElement("td");
 	          td2.innerText=questionList[questionNo].questionName;
 	          let td3=document.createElement("td");
+	          td3.setAttribute("id","showAnswer"+tempi);
 	          let answeredValue=[];
 				if(questionList[questionNo].questionType=="Mutiple Choice")
 		    	{
 					$('input[name=question_'+questionNo+']:checked').each(function()
 					{
-					  answeredValue.push($(this).val());
+					  answeredValue.push(String.fromCharCode(parseInt($(this).val())+65));
 					});
 					  		
 		    	}
@@ -232,10 +253,26 @@ function hello()
 		    		answeredValue.push($("textarea[name=question_"+questionNo+"]").val());
 			    }
 			  td3.innerText=answeredValue;
+			  //console.log(questionNo+":"+answeredValue);
+			  //$("#")
+			  //$("#showAnswer"+tempi).innerText=answeredValue;
 			  let td4=document.createElement("td");
+			  let editButton=document.createElement("button");
+	          editButton.setAttribute("class","btn btn-info justify-content-end");
+	          editButton.setAttribute("type","button");
+	          editButton.setAttribute("value",questionNo);
+	          editButton.innerHTML=questionNo;
+	          td4.appendChild(editButton);
+
 			  tr.append(th,td2,td3,td4);
 			  tbody.appendChild(tr);
+			  editButton.addEventListener("click",(e)=>{
+	          	$("#question"+(tempi+1)).remove();
+    			$("#question"+(editButton.value)).show();
+    			//alert(editButton.value);
+	          });
 			}
+
 
 			appendixList.appendChild(tbody);
 
@@ -257,9 +294,17 @@ function hello()
     		endDiv.appendChild(br);
     		$("#question"+(tempi)).after(endDiv);
     		previousQuestionButton2.addEventListener("click",(e)=>{
-    			$("#question"+(tempi+1)).hide();
+    			$("#question"+(tempi+1)).remove();
     			$("#question"+(tempi)).show();
-    		})
+    		});
+    		endButton.addEventListener("click",(e)=>{
+    			let today = new Date();
+				let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()+' '+today.getHours()+':'+today.getMinutes();
+    			let addSubmitAnswerDB=db.collection("submitAssignment").doc(userID+assignmentID);
+    			let addSubmitAnswer=addSubmitAnswerDB.update({submitTime: date});
+
+
+    		});
     	}
     })
 }
