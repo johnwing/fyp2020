@@ -18,7 +18,14 @@
   </style>
 
 </head>
-<body>
+<body onbeforeunload=myFunction()>
+    
+<script>
+function myFunction() {
+  console.log("bye!");
+  return "Write something clever here...";
+}
+</script>
 
 <div class="container-fluid">
   <h1 class="display-4" id="assignmentTopic">Hi</h1>

@@ -34,9 +34,19 @@ auth.onAuthStateChanged(user => {
 	let today = new Date();
 	let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()+' '+today.getHours()+':'+today.getMinutes();
 
-	let startAnswerDB=db.collection("submitAssignment").doc(userID+assignmentID);
-	let startAnswer=startAnswerDB.set({startTime: date});
+	let startAnswerDB=db.collection("submitAssignment").doc(userID+assignmentID).get().then(snapshot=>{
+		if (!snapshot.exists) {
+        	let startAnswer=db.collection("submitAssignment").doc(userID+assignmentID).set({startTime: date});
+       		//console.log(snapshot);
+        }
+        else
+        {
+        	//alert("ID: "+userID+assignmentID);
+        	console.log(snapshot);
+        }
+	});
 
+	
 
 
   }
@@ -141,7 +151,7 @@ function hello()
 	<div class="input-group mb-3">
 	  <div class="input-group-prepend">
 	    <div class="input-group-text">
-	      <input type="checkbox" value=`+tempi+` aria-label="Checkbox for following text input">
+	      <input type="checkbox" value=`+tempi+` name="recheckCheckbox" aria-label="Checkbox for following text input">
 	    </div>
 	  </div>
 	  <div class="form-control">Tick this checkbox for reminding double check before submit.</div>
@@ -183,7 +193,7 @@ function hello()
     	{
 			$('input[name=question_'+tempi+']:checked').each(function()
 			{
-			  answeredValue.push($(this).val());
+			  answeredValue.push(parseInt($(this).val()));
 			});
 			  		
     	}
@@ -227,6 +237,12 @@ function hello()
 	          `;
 	      let tbody=document.createElement("tbody");      
 	      let questionNo=0;
+	      let needRecheckQuestion=[];
+	      $('input[name="recheckCheckbox"]:checked').each(function()
+			{
+			  needRecheckQuestion.push($(this).val());
+			});	
+	      console.log("RECHECK: "+needRecheckQuestion);
 	      for(questionNo=0;questionNo<=tempi;questionNo++)
 	      {
 	      	
@@ -258,10 +274,21 @@ function hello()
 			  //$("#showAnswer"+tempi).innerText=answeredValue;
 			  let td4=document.createElement("td");
 			  let editButton=document.createElement("button");
-	          editButton.setAttribute("class","btn btn-info justify-content-end");
 	          editButton.setAttribute("type","button");
 	          editButton.setAttribute("value",questionNo);
-	          editButton.innerHTML=questionNo;
+	          if(needRecheckQuestion.includes(parseInt(questionNo)))
+	          {
+	          	console.log("1");
+          		editButton.setAttribute("class","btn btn-danger justify-content-end");
+          		editButton.innerHTML="Recheck Here!!";
+	          }
+	          else
+	          {
+	          	console.log("2");
+	          	editButton.setAttribute("class","btn btn-info justify-content-end");
+	          	editButton.innerHTML="Edit";
+	          }
+	          
 	          td4.appendChild(editButton);
 
 			  tr.append(th,td2,td3,td4);
@@ -271,6 +298,7 @@ function hello()
     			$("#question"+(editButton.value)).show();
     			//alert(editButton.value);
 	          });
+
 			}
 
 
@@ -302,11 +330,11 @@ function hello()
 				let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()+' '+today.getHours()+':'+today.getMinutes();
     			let addSubmitAnswerDB=db.collection("submitAssignment").doc(userID+assignmentID);
     			let addSubmitAnswer=addSubmitAnswerDB.update({submitTime: date});
-
-
+    			window.location.replace("studentHomepage.html");
     		});
     	}
     })
 }
 
-	
+
+
