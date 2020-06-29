@@ -2,8 +2,16 @@
 
 var assignmentID="";
 //init Setting
-assignmentID="f1b924d6-10c3-4747-8efd-751db118b170";
-let targetAssignmentDbRef=db.collection("assignmentForm").where("assignmentID","==","f1b924d6-10c3-4747-8efd-751db118b170");
+if($.cookie("assignmentID"))
+{
+   assignmentID=$.cookie("assignmentID");
+   $.removeCookie('assignmentID');
+}
+else
+{
+	assignmentID="f1b924d6-10c3-4747-8efd-751db118b170";
+}
+let targetAssignmentDbRef=db.collection("assignmentForm").where("assignmentID","==",assignmentID);
 let getDoc=targetAssignmentDbRef.get().then(snapshot =>{
 	if(snapshot.empty)
 	{
@@ -242,7 +250,7 @@ function hello()
 			{
 			  needRecheckQuestion.push($(this).val());
 			});	
-	      console.log("RECHECK: "+needRecheckQuestion);
+	      
 	      for(questionNo=0;questionNo<=tempi;questionNo++)
 	      {
 	      	
@@ -276,15 +284,18 @@ function hello()
 			  let editButton=document.createElement("button");
 	          editButton.setAttribute("type","button");
 	          editButton.setAttribute("value",questionNo);
-	          if(needRecheckQuestion.includes(parseInt(questionNo)))
+	          console.log("RECHECK: "+needRecheckQuestion);
+	          console.log("qNo:"+parseInt(questionNo));
+	          let needCheck=0;
+	          if(needRecheckQuestion.includes(questionNo.toString()))
 	          {
-	          	console.log("1");
+	          	needCheck=1;
           		editButton.setAttribute("class","btn btn-danger justify-content-end");
           		editButton.innerHTML="Recheck Here!!";
 	          }
 	          else
 	          {
-	          	console.log("2");
+	          	needCheck=0;
 	          	editButton.setAttribute("class","btn btn-info justify-content-end");
 	          	editButton.innerHTML="Edit";
 	          }
@@ -296,6 +307,19 @@ function hello()
 			  editButton.addEventListener("click",(e)=>{
 	          	$("#question"+(tempi+1)).remove();
     			$("#question"+(editButton.value)).show();
+    			if(needRecheckQuestion.includes(editButton.value.toString()))
+    			{
+    				console.log("HI:");
+    				$('input[name="recheckCheckbox"]').each(function()
+					{
+					  	if($(this).val()==editButton.value)
+					  	{
+					  		$(this).prop('checked', false);
+					  	}
+
+					  	//needRecheckQuestion.push($(this).val());
+					});	
+    			}
     			//alert(editButton.value);
 	          });
 

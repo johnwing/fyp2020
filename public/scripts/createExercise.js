@@ -4,7 +4,7 @@ jQuery.validator.setDefaults({
   success: "valid"
 });
 
-
+var userUid;
 $('form[id="assignmentForm"]').validate({
   rules: {
     assignmentTopic: 'required',
@@ -60,10 +60,11 @@ var assignmentID;
 var fireStoreAssignmentID;
 auth.onAuthStateChanged(user => {
   if (user && user !== undefined) {
+    setupUI(user);
     console.log("HI"+user);
     user.getIdTokenResult().then(idTokenResult => {
       user.admin = idTokenResult.claims.admin;
-      setupUI(user);
+      
     });
     //9if($.cookie('name', 'value', { path: '/' });)
     if($.cookie("assignmentID"))
@@ -113,7 +114,7 @@ auth.onAuthStateChanged(user => {
 
 
 
-var userUid;
+
 
 const setUpFormTopic=(data)=>
 {

@@ -20,8 +20,23 @@
 </head>
 <body>
 
-<div class="container-fluid">
-  
+<div class='teacher container-fluid'>
+  <h3 class="display-4">Assignment List</h3>
+  <table class="table table-striped">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Assignment Topic</th>
+        <th scope="col">Description</th>
+        <th scope="col">Edit</th>
+      </tr>
+    </thead>
+    <tbody id="assignmentList">
+      
+    </tbody>
+  </table>
+  <button id="createNewAssignment" class="btn btn-info justify-content-end"> Create New Assignment </button>
+
 
 </div>
 
@@ -48,7 +63,7 @@
 
 
 <!--Scripts-->
-    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase.js"></script>
   <script src="scripts/initFirebase.js">
 
   </script>

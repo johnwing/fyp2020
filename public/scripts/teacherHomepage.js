@@ -56,6 +56,7 @@ const setupAssignmentList=(data) =>
 			editButton.setAttribute("class","btn btn-info justify-content-end");
 			editButton.setAttribute("type","button");
 			editButton.innerHTML="Edit";
+
 			let clearCookie=document.createElement("button");
 			clearCookie.setAttribute("class","btn btn-info justify-content-end");
 			clearCookie.setAttribute("type","button");
@@ -66,7 +67,7 @@ const setupAssignmentList=(data) =>
 			td3.append(" ");
       		td3.appendChild(deleteButton);
       		td3.append(" ");
-      		td3.appendChild(clearCookie);
+      		//td3.appendChild(clearCookie);
 			tr.appendChild(th);
 			tr.appendChild(td1);
 			tr.appendChild(td2);
