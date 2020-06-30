@@ -17,6 +17,8 @@ let getDoc=targetAssignmentDbRef.get().then(snapshot =>{
 	{
 		//return to the 
 		alert("Something Wrong");
+		window.location.replace("studentHomepage.html");
+
 	}else
 	{
 		snapshot.forEach(doc => {
