@@ -54,6 +54,11 @@ const setupAssignmentList=(data) =>
 			startAssignmentButton.setAttribute("type","button");
 			startAssignmentButton.innerHTML="Start Assignment";
 
+			let waitForMarking=document.createElement('div');
+			waitForMarking.setAttribute("class","");
+			//waitForMarking.setAttribute
+			
+
 			
 
       		td3.appendChild(startAssignmentButton);
@@ -67,7 +72,7 @@ const setupAssignmentList=(data) =>
 			startAssignmentButton.addEventListener("click", (e)=>
 			{
 				let id= guide.assignmentID;
-				$.cookie('assignmentID', id);  // 创建 cookie
+				$.cookie('assignmentID', id);  
 				window.location.replace("studentResponse.html");
 			})
 
