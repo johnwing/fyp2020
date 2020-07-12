@@ -1,4 +1,5 @@
 //value init
+
 var navBarHtml=`<!--Login Navbar-->
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,9 +103,17 @@ appendixList.innerHTML=navBarHtml;
 setUpNavBar();
 
 
+
 // listen for auth status changes
 auth.onAuthStateChanged(user => {
+
   if (user) {
+    user.getIdTokenResult().then(idTokenResult => {
+      console.log(idTokenResult.claims);
+
+    });
+
+
     $("#logoutButton").show();
     $("#loginButton").hide();
     $("#Name").show();

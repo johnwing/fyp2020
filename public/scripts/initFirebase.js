@@ -18,3 +18,6 @@
 
     // update firestore settings
     db.settings({ timestampsInSnapshots: true });
+
+
+    

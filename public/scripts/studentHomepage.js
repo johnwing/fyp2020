@@ -2,6 +2,18 @@ jQuery.validator.setDefaults({
 	debug: true,
 	success: "valid"
 });
+/*
+var user = firebase.auth().currentUser;
+var credential;
+
+// Prompt the user to re-provide their sign-in credentials
+
+user.reauthenticateWithCredential(credential).then(function() {
+  // User re-authenticated.
+}).catch(function(error) {
+  // An error happened.
+});
+*/
 
 // website setup
 auth.onAuthStateChanged(user => {
@@ -21,12 +33,30 @@ auth.onAuthStateChanged(user => {
 	});
 
 var userUid;
-
+var adminEmail;
 const setupUI=(user) => {
 	console.log(user.uid);
 	userUid=user.uid;
+	adminEmail=user.email;
 
 }
+/*
+const deleteAdminRole = functions.httpsCallable('deleteAdminRole');
+  deleteAdminRole({ email: 'a@b.com', id: 'DttUEgwAM9QOLn0lmezfO8Rpjj33'
+ }).then(result => {
+    console.log(result);
+  });
+*/
+
+const addAdminRole = functions.httpsCallable('addAdminRole');
+  addAdminRole({ email: 'a@b.com', id: 'DttUEgwAM9QOLn0lmezfO8Rpjj33'
+ }).then(result => {
+    console.log(result);
+  });
+
+
+//firebase.auth().currentUser.getIdToken(1);
+
 
 //setup the assignment List
 const setupAssignmentList=(data) =>

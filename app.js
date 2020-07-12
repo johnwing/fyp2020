@@ -5,6 +5,7 @@
 var express = require('express');
 var app = express();
 var firebase = require("firebase");
+var admin = require('firebase-admin');
 //var firebaseui = require('firebaseui');
 var mysql = require('mysql');
 var engine = require('ejs-locals');
