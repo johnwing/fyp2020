@@ -37,7 +37,7 @@
     "googleapis": "^48.0.0",
     "html": "^1.0.0",
     "jquery": "^3.5.1",
-    "jquery-validation": "^1.19.2",
+    "jquery-validation": "^1.19.5",
     "mysql": "^2.18.1"
   },
   "description": ""
